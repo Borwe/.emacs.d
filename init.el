@@ -108,6 +108,9 @@
   (setq evil-want-c-i-jump nil)
   :config
   (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "M-t") 'vterm)
+  (define-key evil-insert-state-map (kbd "C-i") 'completion-at-point)
+  (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
@@ -150,7 +153,12 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :init
-  (setq lsp-keymap-prefix "C-c l"))
+  (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-modeline-diagnostics-enable t))
+
+(use-package lsp-treemacs
+  :after lsp-mode
+  :init (lsp-treemacs-sync-mode 1))
 
 (use-package company
   :after lsp-mode
@@ -178,7 +186,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
+   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
