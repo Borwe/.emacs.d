@@ -11,6 +11,9 @@
 (menu-bar--display-line-numbers-mode-relative)
 (global-display-line-numbers-mode t)
 
+;; use pairing of keys, eg: "" () '' etc...
+(electric-pair-mode 1)
+
 
 (dolist (mode '(org-mode-hook vterm-mode term-mode-hook shell-mode-hook eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -186,7 +189,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
+   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode))
+ '(wakatime-cli-path "/home/brian/.local/bin/wakatime"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
