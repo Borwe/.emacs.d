@@ -148,9 +148,22 @@
   :hook (org-mode . efs/org-mode-visual-fill))
 
 
-;;vterm
-(use-package vterm
-  :ensure t)
+;;Function to handle displaying htop on startup
+(defun htop ()
+  (interactive)
+  (if (eq system-type 'gnu/linux)
+    (let ()
+	(vterm "htop")
+	(vterm-send-string "htop")
+	(vterm-send-return))))
+
+;; setup vterm if on linux
+(if (eq system-type 'gnu/linux)
+    (let ()
+	(use-package vterm
+	:init (htop)
+	:ensure t)))
+
 
 ;; lsp setup
 (use-package lsp-mode
