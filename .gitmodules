@@ -1,0 +1,3 @@
+[submodule "lisp/wakatime-mode"]
+	path = lisp/wakatime-mode
+	url = https://github.com/Borwe/wakatime-mode.git
