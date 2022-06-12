@@ -19,7 +19,7 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; set font
-(set-face-attribute 'default nil :font "noto mono" :height 100) 
+;;(set-face-attribute 'default nil :font "noto mono" :height 100) 
 
 
 ;; initialize package sources
@@ -40,7 +40,9 @@
 
 (use-package swiper)
 
-(use-package wakatime-mode)
+;;(use-package wakatime-mode)
+(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
+(load "wakatime-mode")
 (global-wakatime-mode)
 
 (use-package ivy
@@ -202,8 +204,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode))
- '(wakatime-cli-path "/home/brian/.local/bin/wakatime"))
+   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
