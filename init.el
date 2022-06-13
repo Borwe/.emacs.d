@@ -159,6 +159,14 @@
 	(vterm-send-string "htop")
 	(vterm-send-return))))
 
+;;Function to enable using cmd.exe on winows
+(if (eq system-type 'windows-nt)
+    (progn (defun cmd-exe ()
+	     "Open cmd.exe on windows"
+	     (interactive)
+	     (let ((explicit-shell-file-name "c:/Windows/System32/cmd.exe"))
+	       (shell)))))
+
 ;; setup vterm if on linux
 (if (eq system-type 'gnu/linux)
     (let ()
@@ -172,6 +180,7 @@
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-modeline-diagnostics-enable t))
 
 (use-package lsp-treemacs
