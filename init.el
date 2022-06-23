@@ -134,9 +134,28 @@
   :after evil
   :config (evil-collection-init))
 
+(defun borwe/get_cpp_setup_cmd ()
+  (cond ((eq system-type 'windows-nt) "vcvars64 && cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug")
+	((eq system-type 'gnu/linux) "cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug")))
+(defun borwe/get_vcpkg_path ()
+  (cond ((eq system-type 'windows-nt) "C:/Users/BRIAN/Documents/vcpkg/scripts//buildsystems/vcpkg.cmake")
+	(eq system-type 'gnu/linux) "~/Git-Repos/vcpkg/scripts/buildsystems/vcpkg.cmake"))
+
+(defun borwe/get_cpp_compile_cmd ()
+  (concat (borwe/get_cpp_setup_cmd) " -DCMAKE_TOOLCHAIN_FILE=" (borwe/get_vcpkg_path)))
+
+(defun borwe/get_compile_json_cpp_cmd ()
+  (concat (borwe/get_cpp_compile_cmd) " -DCMAKE_EXPORT_COMPILE_COMMANDS=1 && "
+	  (cond ((eq system-type 'windows-nt) "copy build\\compile_commands.json compile_commands.json")
+		((eq system-type 'gnu/linux) "cp build/compile_commands.json compile_commands.json"))))
+
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-mode)
+  :config
+  (projectile-mode)
+  (projectile-register-project-type 'cpp-vcpkg-setup '("CMakeLists.txt")
+				    :project-file "CMakeLists.txt"
+				    :compile  (concat (borwe/get_compile_json_cpp_cmd) " && cmake --build build --config debug"))
   :bind-keymap ("C-c p" . projectile-command-map))
 
 (use-package counsel-projectile
@@ -188,7 +207,7 @@
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-modeline-diagnostics-enable t)
   :hook
-  (prog-mode . lsp)
+  (c-or-c++-mode . lsp)
   (typescript-mode . lsp-deferred))
 
 (use-package rustic
