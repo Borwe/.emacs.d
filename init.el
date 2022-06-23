@@ -27,7 +27,7 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 ;;			 ("melpa-stable" . "https://stable.melpa.org/packages")
 			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+			 ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
@@ -44,6 +44,10 @@
 (add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
 (load "wakatime-mode")
 (global-wakatime-mode)
+
+(use-package cmake-mode)
+(use-package cmake-font-lock
+  :after cmake-mode)
 
 (use-package ivy
 	     :diminish
@@ -183,6 +187,9 @@
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-modeline-diagnostics-enable t))
 
+(use-package rustic
+  :after lsp-mode)
+
 (use-package lsp-treemacs
   :after lsp-mode
   :init (lsp-treemacs-sync-mode 1))
@@ -213,7 +220,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
+   '(cmake-font-lock lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
