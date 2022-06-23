@@ -181,11 +181,15 @@
 
 ;; lsp setup
 (use-package lsp-mode
+  :after typescript-mode
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-rust-server 'rust-analyzer)
-  (setq lsp-modeline-diagnostics-enable t))
+  (setq lsp-modeline-diagnostics-enable t)
+  :hook
+  (prog-mode . lsp)
+  (typescript-mode . lsp-deferred))
 
 (use-package rustic
   :after lsp-mode)
@@ -212,7 +216,6 @@
 
 ;;typescript editing
 (use-package typescript-mode
-  :hook (typescript-mode . lsp-deferred)
   :config (setq typescript-indent-level 2))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
