@@ -149,6 +149,19 @@
 	  (cond ((eq system-type 'windows-nt) "copy build\\compile_commands.json compile_commands.json")
 		((eq system-type 'gnu/linux) "cp build/compile_commands.json compile_commands.json"))))
 
+
+(defun borwe/cargo_or_trunk_run ()
+    (interactive)
+    (with-temp-buffer
+      (insert-file-contents-literally "Cargo.toml")
+      (message (if (search-forward "yew" nil t) "trunk serve --open" "cargo run"))))
+
+(defun borwe/cargo_or_trunk_compile ()
+    (interactive)
+    (with-temp-buffer
+      (insert-file-contents-literally "Cargo.toml")
+      (message (if (search-forward "yew" nil t) "trunk serve --open" "cargo run"))))
+
 (use-package projectile
   :diminish projectile-mode
   :config
@@ -156,6 +169,9 @@
   (projectile-register-project-type 'cpp-vcpkg-setup '("CMakeLists.txt")
 				    :project-file "CMakeLists.txt"
 				    :compile  (concat (borwe/get_compile_json_cpp_cmd) " && cmake --build build --config debug"))
+  (projectile-register-project-type 'rust-cargo '("Cargo.toml")
+				    :project-file "Cargo.toml"
+				    :run 'borwe/cargo_or_trunk_run)
   :bind-keymap ("C-c p" . projectile-command-map))
 
 (use-package counsel-projectile
@@ -207,7 +223,10 @@
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-modeline-diagnostics-enable t)
   :hook
-  (c-or-c++-mode . lsp)
+  (rust-mode . lsp-deferred)
+  (c++-mode . lsp-deferred)
+  (c-mode . lsp-deferred)
+  (cmake-mode . lsp-deferred)
   (typescript-mode . lsp-deferred))
 
 (use-package rustic
