@@ -7,6 +7,8 @@
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
 
+
+
 (column-number-mode)
 (menu-bar--display-line-numbers-mode-relative)
 (global-display-line-numbers-mode t)
@@ -135,19 +137,19 @@
   :config (evil-collection-init))
 
 (defun borwe/get_cpp_setup_cmd ()
-  (cond ((eq system-type 'windows-nt) "vcvars64 && cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug")
-	((eq system-type 'gnu/linux) "cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug")))
+  (cond ((equal system-type 'windows-nt) "vcvars64 && cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug")
+	((equal system-type 'gnu/linux) "cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug")))
 (defun borwe/get_vcpkg_path ()
-  (cond ((eq system-type 'windows-nt) "C:/Users/BRIAN/Documents/vcpkg/scripts//buildsystems/vcpkg.cmake")
-	(eq system-type 'gnu/linux) "~/Git-Repos/vcpkg/scripts/buildsystems/vcpkg.cmake"))
+  (cond ((equal system-type 'windows-nt) "C:/Users/BRIAN/Documents/vcpkg/scripts//buildsystems/vcpkg.cmake")
+	((equal system-type 'gnu/linux) "~/Git-Repos/vcpkg/scripts/buildsystems/vcpkg.cmake") ))
 
 (defun borwe/get_cpp_compile_cmd ()
   (concat (borwe/get_cpp_setup_cmd) " -DCMAKE_TOOLCHAIN_FILE=" (borwe/get_vcpkg_path)))
 
 (defun borwe/get_compile_json_cpp_cmd ()
   (concat (borwe/get_cpp_compile_cmd) " -DCMAKE_EXPORT_COMPILE_COMMANDS=1 && "
-	  (cond ((eq system-type 'windows-nt) "copy build\\compile_commands.json compile_commands.json")
-		((eq system-type 'gnu/linux) "cp build/compile_commands.json compile_commands.json"))))
+	  (cond ((equal system-type 'windows-nt) "copy build\\compile_commands.json compile_commands.json")
+		((equal system-type 'gnu/linux) "cp build/compile_commands.json compile_commands.json"))))
 
 
 (defun borwe/cargo_or_trunk_run ()
@@ -261,7 +263,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(cmake-font-lock lsp-treemacs hippie-expand which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rainbow-delimiters magit lsp-ui lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company command-log-mode)))
+   '(which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
