@@ -1,0 +1,13 @@
+session*
+.cache/
+auto-save-list/
+eln-cache/
+elpa/
+eshell/
+places
+projectile-bookmarks.eld
+recentf
+transient/
+.lsp-session-v1
+*~
+*#*

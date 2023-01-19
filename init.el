@@ -7,7 +7,9 @@
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
 
-
+(require 'saveplace)
+(setq-default save-place t) ; Enable saving last location
+(save-place-mode)
 
 (column-number-mode)
 (menu-bar--display-line-numbers-mode-relative)
@@ -27,15 +29,13 @@
 ;; initialize package sources
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-;;			 ("melpa-stable" . "https://stable.melpa.org/packages")
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
 ;;initialize use-package on non-linux plaforms
-;(unless (package-installed-p 'use-package) (package-install 'use-pacakge))
-(package-install 'use-package)
+(unless (package-installed-p 'use-package) (package-install 'use-pacakge))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -73,10 +73,10 @@
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 3)))
+  :custom ((doom-modeline-height 1)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-dracula t))
+  :init (load-theme 'doom-dark+ t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -111,7 +111,14 @@
 (general-define-key
  "C-M-j" 'counsel-switch-buffer)
 
+(defun borwe/lsp-ui-show-info-scroll ()
+  (interactive)
+  (lsp-ui-doc-show)
+  (run-at-time "1 sec" nil 'lsp-ui-doc-focus-frame))
+
 (use-package evil
+  :after lsp-mode
+  :after lsp-treemacs
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -119,6 +126,12 @@
   (setq evil-want-c-i-jump nil)
   :config
   (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
+  (define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
+  (define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
+  (define-key evil-normal-state-map (kbd "<SPC> d") 'borwe/lsp-ui-show-info-scroll)
+  (define-key evil-normal-state-map (kbd "<SPC> h") 'lsp-ui-doc-hide)
+  (define-key evil-normal-state-map (kbd "<SPC> x") 'lsp-treemacs-errors-list)
   (define-key evil-normal-state-map (kbd "M-t") 'vterm)
   (define-key evil-insert-state-map (kbd "C-i") 'completion-at-point)
   (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
@@ -215,24 +228,37 @@
 	:init (htop)
 	:ensure t)))
 
+;; For pyright
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+			 (require 'lsp-pyright)
+			 (lsp-deferred))))
+
+;;zig mode
+(use-package zig-mode)
 
 ;; lsp setup
 (use-package lsp-mode
   :after typescript-mode
+  :after zig-mode
+  :after rustic
+  :after lsp-pyright
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-rust-server 'rust-analyzer)
+  (setq lsp-zig-zls-executable "/home/brian/.vim/plugged/lsp-examples/zig/zls/zig-out/bin/zls")
   (setq lsp-modeline-diagnostics-enable t)
   :hook
   (rust-mode . lsp-deferred)
   (c++-mode . lsp-deferred)
   (c-mode . lsp-deferred)
   (cmake-mode . lsp-deferred)
+  (zig-mode . lsp-deferred)
   (typescript-mode . lsp-deferred))
 
-(use-package rustic
-  :after lsp-mode)
+(use-package rustic)
 
 (use-package lsp-treemacs
   :after lsp-mode
@@ -262,8 +288,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22" "1aa4243143f6c9f2a51ff173221f4fd23a1719f4194df6cef8878e75d349613d" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "1cae4424345f7fe5225724301ef1a793e610ae5a4e23c023076dc334a9eb940a" default))
  '(package-selected-packages
-   '(which-key wakatime-mode vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons)))
+   '(zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
