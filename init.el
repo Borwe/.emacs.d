@@ -3,6 +3,7 @@
 (tool-bar-mode -1)   ; disable the toolbar
 (tooltip-mode -1)    ; disable tooltips
 (set-fringe-mode 10) ; give some breathing room
+(setq-default tab-width 4) ; Set tab width
 
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
@@ -35,16 +36,16 @@
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
 ;;initialize use-package on non-linux plaforms
-(unless (package-installed-p 'use-package) (package-install 'use-pacakge))
+(unless (package-installed-p 'use-package) (package-install 'use-package))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
 
 (use-package swiper)
 
-;;(use-package wakatime-mode)
-(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
-(load "wakatime-mode")
+(use-package wakatime-mode)
+;;(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
+;;(load "wakatime-mode")
 (global-wakatime-mode)
 
 (use-package cmake-mode)
@@ -106,6 +107,9 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
+
+(use-package origami
+  :ensure t)
 
 (use-package general)
 (general-define-key
@@ -291,7 +295,8 @@
  '(custom-safe-themes
    '("b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22" "1aa4243143f6c9f2a51ff173221f4fd23a1719f4194df6cef8878e75d349613d" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "1cae4424345f7fe5225724301ef1a793e610ae5a4e23c023076dc334a9eb940a" default))
  '(package-selected-packages
-   '(zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons)))
+   '(origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
+ '(warning-suppress-types '((lsp-mode) (lsp-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
