@@ -34,7 +34,7 @@
 (electric-pair-mode 1)
 
 
-(dolist (mode '(org-mode-hook vterm-mode term-mode-hook shell-mode-hook eshell-mode-hook))
+(dolist (mode '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; set font
@@ -139,6 +139,10 @@
   (lsp-ui-doc-show)
   (run-at-time "1 sec" nil 'lsp-ui-doc-focus-frame))
 
+(defun borwe/enable-vim ()
+  (if (not (eq major-mode 'special-mode))
+	  (evil-local-mode)))
+
 (use-package evil
   :after lsp-mode
   :after lsp-treemacs
@@ -148,7 +152,7 @@
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
-  (evil-mode 1)
+  (add-hook 'prog-mode-hook 'borwe/enable-vim)
   (define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
   (define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
   (define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
@@ -266,14 +270,20 @@
 ;;zig mode
 (use-package zig-mode)
 
+;;go mode
+(use-package go-mode
+  :init (progn (setenv "PATH" (concat (getenv "PATH") ":/home/brian/go/bin/"))))
+
 ;; lsp setup
 (use-package lsp-mode
   :after typescript-mode
+  :after go-mode
   :after zig-mode
   :after rustic
   :after lsp-pyright
   :commands (lsp lsp-deferred)
   :init
+  (setq lsp-go-gopls-server-path "/home/brian/go/bin/gopls")
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-zig-zls-executable "/home/brian/.vim/plugged/lsp-examples/zig/zls/zig-out/bin/zls")
@@ -282,6 +292,7 @@
   (rust-mode . lsp-deferred)
   (c++-mode . lsp-deferred)
   (c-mode . lsp-deferred)
+  (go-mode . lsp-deferred)
   (cmake-mode . lsp-deferred)
   (zig-mode . lsp-deferred)
   (typescript-mode . lsp-deferred))
@@ -319,7 +330,7 @@
  '(custom-safe-themes
    '("b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22" "1aa4243143f6c9f2a51ff173221f4fd23a1719f4194df6cef8878e75d349613d" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "1cae4424345f7fe5225724301ef1a793e610ae5a4e23c023076dc334a9eb940a" default))
  '(package-selected-packages
-   '(tree-sitter-langs tree-sitter origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
+   '(go-mode tree-sitter-langs tree-sitter origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
  '(wakatime-cli-path "~/.wakatime/wakatime-cli")
  '(warning-suppress-types '((lsp-mode) (lsp-mode))))
 (custom-set-faces
