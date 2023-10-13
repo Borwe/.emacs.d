@@ -139,9 +139,12 @@
   (lsp-ui-doc-show)
   (run-at-time "1 sec" nil 'lsp-ui-doc-focus-frame))
 
-(defun borwe/enable-vim ()
-  (if (not (eq major-mode 'special-mode))
-	  (evil-local-mode)))
+(defun borwe/disable-evil-mode ()
+  (interactive)
+  (if (derived-mode-p 'special-mode)
+	  (progn
+		(message "DOING %s" 'major-mode)
+		(turn-off-evil-mode))))
 
 (use-package evil
   :after lsp-mode
@@ -152,7 +155,8 @@
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
-  (add-hook 'prog-mode-hook 'borwe/enable-vim)
+  (add-hook 'buffer-list-update-hook 'borwe/disable-evil-mode)
+  (evil-mode)
   (define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
   (define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
   (define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
