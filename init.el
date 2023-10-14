@@ -38,7 +38,7 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; set font
-;;(set-face-attribute 'default nil :font "noto mono" :height 100) 
+(set-face-attribute 'default nil :font "noto mono" :height 120)
 
 
 ;; initialize package sources
@@ -143,7 +143,6 @@
   (interactive)
   (if (derived-mode-p 'special-mode)
 	  (progn
-		(message "DOING %s" 'major-mode)
 		(turn-off-evil-mode))))
 
 (use-package evil
@@ -285,6 +284,7 @@
   :after zig-mode
   :after rustic
   :after lsp-pyright
+  :after dart-mode
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-go-gopls-server-path "/home/brian/go/bin/gopls")
@@ -299,9 +299,19 @@
   (go-mode . lsp-deferred)
   (cmake-mode . lsp-deferred)
   (zig-mode . lsp-deferred)
+  (dart-mode. lsp-deferred)
   (typescript-mode . lsp-deferred))
 
 (use-package rustic)
+
+(use-package yaml-mode)
+
+(use-package lsp-dart
+  :config
+  (setq lsp-dart-flutter-sdk-dir "/home/brian/Apps/flutter"))
+  ;(setq lsp-dart-sdk-dir "/home/brian/Apps/flutter/bin/"))
+(use-package dart-mode
+  :after lsp-dart)
 
 (use-package lsp-treemacs
   :after lsp-mode
@@ -334,7 +344,7 @@
  '(custom-safe-themes
    '("b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22" "1aa4243143f6c9f2a51ff173221f4fd23a1719f4194df6cef8878e75d349613d" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "1cae4424345f7fe5225724301ef1a793e610ae5a4e23c023076dc334a9eb940a" default))
  '(package-selected-packages
-   '(go-mode tree-sitter-langs tree-sitter origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
+   '(lsp-dart yaml-mode go-mode tree-sitter-langs tree-sitter origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
  '(wakatime-cli-path "~/.wakatime/wakatime-cli")
  '(warning-suppress-types '((lsp-mode) (lsp-mode))))
 (custom-set-faces
