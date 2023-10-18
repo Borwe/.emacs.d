@@ -38,7 +38,7 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; set font
-(set-face-attribute 'default nil :font "noto mono" :height 120)
+(set-face-attribute 'default nil :font "Intel One Mono" :height 100)
 
 
 ;; initialize package sources
@@ -57,10 +57,21 @@
 
 (use-package swiper)
 
-(use-package wakatime-mode)
-;;(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
+;;(use-package wakatime-mode)
+(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
 ;;(load "wakatime-mode")
 (global-wakatime-mode)
+
+;;LSP installing and configuring
+(defun borwe/setup-eglot ()
+  "Setup variables and configs for eglot"
+  (load-file (concat user-emacs-directory "lsp_installers.el"))
+  (with-eval-after-load 'eglot
+	(progn
+	  (setq eglot-autoshutdown t))))
+
+(use-package eglot
+  :config (borwe/setup-eglot))
 
 (use-package cmake-mode)
 (use-package cmake-font-lock
@@ -146,8 +157,8 @@
 		(turn-off-evil-mode))))
 
 (use-package evil
-  :after lsp-mode
-  :after lsp-treemacs
+  ;;:after lsp-mode
+  ;;:after lsp-treemacs
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -156,12 +167,12 @@
   :config
   (add-hook 'buffer-list-update-hook 'borwe/disable-evil-mode)
   (evil-mode)
-  (define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
-  (define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
-  (define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
-  (define-key evil-normal-state-map (kbd "<SPC> d") 'borwe/lsp-ui-show-info-scroll)
-  (define-key evil-normal-state-map (kbd "<SPC> h") 'lsp-ui-doc-hide)
-  (define-key evil-normal-state-map (kbd "<SPC> x") 'lsp-treemacs-errors-list)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> d") 'borwe/lsp-ui-show-info-scroll)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> h") 'lsp-ui-doc-hide)
+  ;;(define-key evil-normal-state-map (kbd "<SPC> x") 'lsp-treemacs-errors-list)
   (define-key evil-normal-state-map (kbd "M-t") 'vterm)
   (define-key evil-insert-state-map (kbd "C-i") 'completion-at-point)
   (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
@@ -264,11 +275,11 @@
 	:ensure t)))
 
 ;; For pyright
-(use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
-			 (require 'lsp-pyright)
-			 (lsp-deferred))))
+;;(use-package lsp-pyright;;
+;;  :ensure t
+;;  :hook (python-mode . (lambda ()
+;;			 (require 'lsp-pyright)
+;;			 (lsp-deferred))))
 
 ;;zig mode
 (use-package zig-mode)
@@ -278,78 +289,68 @@
   :init (progn (setenv "PATH" (concat (getenv "PATH") ":/home/brian/go/bin/"))))
 
 ;; lsp setup
-(use-package lsp-mode
-  :after typescript-mode
-  :after go-mode
-  :after zig-mode
-  :after rustic
-  :after lsp-pyright
-  :after dart-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-go-gopls-server-path "/home/brian/go/bin/gopls")
-  (setq lsp-keymap-prefix "C-c l")
-  (setq lsp-rust-server 'rust-analyzer)
-  (setq lsp-zig-zls-executable "/home/brian/.vim/plugged/lsp-examples/zig/zls/zig-out/bin/zls")
-  (setq lsp-modeline-diagnostics-enable t)
-  :hook
-  (rust-mode . lsp-deferred)
-  (c++-mode . lsp-deferred)
-  (c-mode . lsp-deferred)
-  (go-mode . lsp-deferred)
-  (cmake-mode . lsp-deferred)
-  (zig-mode . lsp-deferred)
-  (dart-mode. lsp-deferred)
-  (typescript-mode . lsp-deferred))
+;;(use-package lsp-mode
+;;  :after typescript-mode
+;;  :after go-mode
+;;  :after zig-mode
+;;  :after rustic
+;;  :after lsp-pyright
+;;  :after dart-mode
+;;  :commands (lsp lsp-deferred)
+;;  :init
+;;  (setq lsp-go-gopls-server-path "/home/brian/go/bin/gopls")
+;;  (setq lsp-keymap-prefix "C-c l")
+;;  (setq lsp-rust-server 'rust-analyzer)
+;;  (setq lsp-zig-zls-executable "/home/brian/.vim/plugged/lsp-examples/zig/zls/zig-out/bin/zls")
+;;  (setq lsp-modeline-diagnostics-enable t)
+;;  :hook
+;;  (rust-mode . lsp-deferred)
+;;  (c++-mode . lsp-deferred)
+;;  (c-mode . lsp-deferred)
+;;  (go-mode . lsp-deferred)
+;;  (cmake-mode . lsp-deferred)
+;; (zig-mode . lsp-deferred)
+;;  (dart-mode. lsp-deferred)
+;;  (typescript-mode . lsp-deferred))
 
 (use-package rustic)
 
 (use-package yaml-mode)
 
-(use-package lsp-dart
-  :config
-  (setq lsp-dart-flutter-sdk-dir "/home/brian/Apps/flutter"))
+;;(use-package lsp-dart
+  ;;:config
+  ;;(setq lsp-dart-flutter-sdk-dir "/home/brian/Apps/flutter"))
   ;(setq lsp-dart-sdk-dir "/home/brian/Apps/flutter/bin/"))
-(use-package dart-mode
-  :after lsp-dart)
+(use-package dart-mode)
+  ;;:after lsp-dart)
 
-(use-package lsp-treemacs
-  :after lsp-mode
-  :init (lsp-treemacs-sync-mode 1))
+;;(use-package lsp-treemacs
+;;  :after lsp-mode
+;;  :init (lsp-treemacs-sync-mode 1))
 
 (use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+  ;;:after lsp-mode
+  ;;:hook (lsp-mode . company-mode)
   :bind (:map company-active-map
 	      ("<tab>" . company-complete-selection))
-  (:map lsp-mode-map
-	("<tab>" . company-indent-or-complete-common))
+  ;;(:map lsp-mode-map
+	;;("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
+;;(use-package lsp-ui
+;;  :hook (lsp-mode . lsp-ui-mode))
 
 (use-package lsp-ivy)
 
 ;;typescript editing
 (use-package typescript-mode
-  :config (setq typescript-indent-level 2))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22" "1aa4243143f6c9f2a51ff173221f4fd23a1719f4194df6cef8878e75d349613d" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "2e05569868dc11a52b08926b4c1a27da77580daa9321773d92822f7a639956ce" "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "1cae4424345f7fe5225724301ef1a793e610ae5a4e23c023076dc334a9eb940a" default))
- '(package-selected-packages
-   '(lsp-dart yaml-mode go-mode tree-sitter-langs tree-sitter origami vdiff zig-mode lsp-pyright which-key vterm visual-fill-column use-package typescript-mode rustic rainbow-delimiters magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful general evil-collection doom-themes doom-modeline counsel-projectile company cmake-font-lock all-the-icons))
- '(wakatime-cli-path "~/.wakatime/wakatime-cli")
- '(warning-suppress-types '((lsp-mode) (lsp-mode))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  :hook
+  (typescript-mode . eglot-ensure)
+  :config
+  (setq typescript-indent-level 2)
+  (add-to-list 'eglot-server-programs
+			   ;;'(typescript-mode . ("C:/Users/Brian/.emacs.d/LSPs/typescript-server/node_modules/.bin/typescript-language-server" "--stdio"))))
+			   '(typescript-mode . ("C:/Users/Brian/.emacs.d/LSPs/typescript-server/node_modules/.bin/typescript-language-server" "--stdio"))))
+
