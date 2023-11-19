@@ -145,17 +145,6 @@
 (general-define-key
  "C-M-j" 'counsel-switch-buffer)
 
-(defun borwe/lsp-ui-show-info-scroll ()
-  (interactive)
-  (lsp-ui-doc-show)
-  (run-at-time "1 sec" nil 'lsp-ui-doc-focus-frame))
-
-(defun borwe/disable-evil-mode ()
-  (interactive)
-  (if (derived-mode-p 'special-mode)
-	  (progn
-		(turn-off-evil-mode))))
-
 (use-package evil
   ;;:after lsp-mode
   ;;:after lsp-treemacs
@@ -165,14 +154,14 @@
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
-  (add-hook 'buffer-list-update-hook 'borwe/disable-evil-mode)
   (evil-mode)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> z") 'lsp-ui-doc-glance)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> n") 'lsp-find-definition)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> a") 'lsp-execute-code-action)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> d") 'borwe/lsp-ui-show-info-scroll)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> h") 'lsp-ui-doc-hide)
-  ;;(define-key evil-normal-state-map (kbd "<SPC> x") 'lsp-treemacs-errors-list)
+  (define-key evil-normal-state-map (kbd "<SPC> z") 'eldoc)
+  (define-key evil-normal-state-map (kbd "<SPC> k") 'eldoc)
+  (define-key evil-normal-state-map (kbd "<SPC> a") 'eglot-code-actions)
+  (define-key evil-normal-state-map (kbd "<SPC> f") 'eglot-format)
+  (define-key evil-normal-state-map (kbd "<SPC> r") 'eglot-rename)
+  (define-key evil-normal-state-map (kbd "<SPC> R") 'eglot-reconnect)
+  (define-key evil-normal-state-map (kbd "<SPC> x") 'flymake-show-project-diagnostics)
   (define-key evil-normal-state-map (kbd "M-t") 'vterm)
   (define-key evil-insert-state-map (kbd "C-i") 'completion-at-point)
   (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
@@ -188,7 +177,9 @@
 
 (use-package evil-collection
   :after evil
-  :config (evil-collection-init))
+  :config
+  (setq evil-want-keybinding nil)
+  (evil-collection-init))
 
 (defun borwe/get_cpp_setup_cmd ()
   (cond ((equal system-type 'windows-nt) "vcvars64 && cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug")
@@ -286,7 +277,21 @@
 
 ;;go mode
 (use-package go-mode
-  :init (progn (setenv "PATH" (concat (getenv "PATH") ":/home/brian/go/bin/"))))
+  :hook (go-mode . eglot-ensure))
+
+
+;; Nuru-LSP
+(define-derived-mode nuru-mode prog-mode "Nuru Mode")
+(setq auto-mode-alist
+	  (append '(("\\nr\\'" . nuru-mode)
+				("\\sr\\'" . nuru-mode))
+			  auto-mode-alist))
+(add-hook 'nuru-mode-hook 'eglot-ensure)
+;;Add path to nuru on emacs search path
+(add-to-list 'exec-path "c:/Users/Brian/Documents/Worspaces/nuru-lsp")
+(add-to-list 'eglot-server-programs
+			 '(nuru-mode . ("nuru-lsp")))
+
 
 ;; lsp setup
 ;;(use-package lsp-mode
@@ -351,6 +356,18 @@
   :config
   (setq typescript-indent-level 2)
   (add-to-list 'eglot-server-programs
-			   ;;'(typescript-mode . ("C:/Users/Brian/.emacs.d/LSPs/typescript-server/node_modules/.bin/typescript-language-server" "--stdio"))))
 			   '(typescript-mode . ("C:/Users/Brian/.emacs.d/LSPs/typescript-server/node_modules/.bin/typescript-language-server" "--stdio"))))
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(eldoc-box eglot-box zig-mode yaml-mode which-key wakatime-mode visual-fill-column typescript-mode tree-sitter-langs rustic rainbow-delimiters origami magit lsp-ivy ivy-rich helpful go-mode general evil-collection eglot doom-themes doom-modeline dart-mode counsel-projectile company cmake-font-lock all-the-icons)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
