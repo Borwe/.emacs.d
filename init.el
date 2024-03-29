@@ -64,9 +64,9 @@
 
 (use-package swiper)
 
-(use-package wakatime-mode)
-;;(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
-;;(load "wakatime-mode")
+;;(use-package wakatime-mode)
+(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
+(load "wakatime-mode")
 (global-wakatime-mode)
 
 ;;LSP installing and configuring
@@ -341,12 +341,8 @@
 ;;  :init (lsp-treemacs-sync-mode 1))
 
 (use-package company
-  ;;:after lsp-mode
-  ;;:hook (lsp-mode . company-mode)
   :bind (:map company-active-map
 	      ("<tab>" . company-complete-selection))
-  ;;(:map lsp-mode-map
-	;;("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
@@ -371,7 +367,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(eldoc-box eglot-box zig-mode yaml-mode which-key wakatime-mode visual-fill-column typescript-mode tree-sitter-langs rustic rainbow-delimiters origami magit lsp-ivy ivy-rich helpful go-mode general evil-collection eglot doom-themes doom-modeline dart-mode counsel-projectile company cmake-font-lock all-the-icons)))
+   '(codeium eldoc-box eglot-box zig-mode yaml-mode which-key wakatime-mode visual-fill-column typescript-mode tree-sitter-langs rustic rainbow-delimiters origami magit lsp-ivy ivy-rich helpful go-mode general evil-collection eglot doom-themes doom-modeline dart-mode counsel-projectile company cmake-font-lock all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
