@@ -52,13 +52,20 @@
 ;;initialize use-package on non-linux plaforms
 (unless (package-installed-p 'use-package) (package-install 'use-package))
 
+;;do git submodule init for everything in here
+(defun borwe/submodules_init ()
+  (message "Starting to git submodule init")
+  (shell-command "git submodule update --init --recursive")
+  (message "Done git submodule init"))
+(borwe/submodules_init)
+
 (require 'use-package)
 (setq use-package-always-ensure t)
 
 (use-package swiper)
 
-;;(use-package wakatime-mode)
-(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
+(use-package wakatime-mode)
+;;(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
 ;;(load "wakatime-mode")
 (global-wakatime-mode)
 
@@ -102,7 +109,7 @@
   :custom ((doom-modeline-height 1)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-dark+ t))
+  :init (load-theme 'doom-one-light t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
