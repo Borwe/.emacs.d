@@ -1,6 +1,6 @@
 [submodule "lisp/wakatime-mode"]
 	path = lisp/wakatime-mode
 	url = https://github.com/Borwe/wakatime-mode.git
-[submodule "lisp/codeium.el"]
-	path = lisp/codeium.el
-	url = https://github.com/Exafunction/codeium.el.git
+[submodule "lisp/emacs-winterm"]
+	path = lisp/emacs-winterm
+	url = https://github.com/Borwe/emacs-winterm.git
