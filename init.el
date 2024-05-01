@@ -12,10 +12,19 @@
 (setq-default save-place t) ; Enable saving last location
 (save-place-mode)
 
-(defun launch-new-emacs ()
+(defun launch-new-emacs (&optional val)
   "Launch new instance of emacs mostly for debuging"
   (interactive)
-  (shell-command (concat invocation-directory invocation-name)))
+  (let ((cmd (if val
+				(concat "cd " invocation-directory " && "  invocation-name  " --execute " val )
+					  (concat invocation-directory invocation-name)
+			   )))
+	(shell-command cmd)))
+
+(defun launch-winterm ()
+  "Launch emacs instance to test emacs-winterm-mode"
+  (interactive)
+  (launch-new-emacs "(emacs-winterm)"))
 
 (defun session-save-here ()
   (interactive)
