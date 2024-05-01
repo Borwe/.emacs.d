@@ -12,6 +12,11 @@
 (setq-default save-place t) ; Enable saving last location
 (save-place-mode)
 
+(defun launch-new-emacs ()
+  "Launch new instance of emacs mostly for debuging"
+  (interactive)
+  (shell-command (concat invocation-directory invocation-name)))
+
 (defun session-save-here ()
   (interactive)
   (if dired-directory
@@ -38,7 +43,7 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; set font
-(set-face-attribute 'default nil :font "Intel One Mono" :height 100)
+(set-face-attribute 'default nil :font "Cascadia Mono" :height 130)
 
 
 ;; initialize package sources
@@ -55,7 +60,8 @@
 ;;do git submodule init for everything in here
 (defun borwe/submodules_init ()
   (message "Starting to git submodule init")
-  (shell-command "git submodule update --init --recursive")
+  (shell-command-to-string (concat "cd " (string-replace "\\" "/" (getenv "APPDATA")) "/.emacs.d && "
+						 "git submodule update --init --recursive"))
   (message "Done git submodule init"))
 (borwe/submodules_init)
 
@@ -64,10 +70,12 @@
 
 (use-package swiper)
 
-;;(use-package wakatime-mode)
-(add-to-list 'load-path (concat user-emacs-directory "lisp/wakatime-mode"))
-(load "wakatime-mode")
-(global-wakatime-mode)
+(use-package wakatime-mode
+  :load-path "lisp/wakatime-mode"
+  :config (global-wakatime-mode))
+
+(use-package emacs-winterm
+  :load-path "lisp/emacs-winterm")
 
 ;;LSP installing and configuring
 (defun borwe/setup-eglot ()
