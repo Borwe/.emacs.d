@@ -83,8 +83,8 @@
   :load-path "lisp/wakatime-mode"
   :config (global-wakatime-mode))
 
-(use-package emacs-winterm
-  :load-path "lisp/emacs-winterm")
+;(use-package emacs-winterm
+;  :load-path "lisp/emacs-winterm")
 
 ;;LSP installing and configuring
 (defun borwe/setup-eglot ()
@@ -165,20 +165,15 @@
   :config (global-tree-sitter-mode)
   :after tree-sitter)
 
-(use-package general)
-(general-define-key
- "C-M-j" 'counsel-switch-buffer)
-
 (use-package evil
-  ;;:after lsp-mode
-  ;;:after lsp-treemacs
+  :after company
+  :ensure t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
-  (evil-mode)
   (define-key evil-normal-state-map (kbd "<SPC> z") 'eldoc)
   (define-key evil-normal-state-map (kbd "<SPC> k") 'eldoc)
   (define-key evil-normal-state-map (kbd "<SPC> a") 'eglot-code-actions)
@@ -187,7 +182,8 @@
   (define-key evil-normal-state-map (kbd "<SPC> R") 'eglot-reconnect)
   (define-key evil-normal-state-map (kbd "<SPC> x") 'flymake-show-project-diagnostics)
   (define-key evil-normal-state-map (kbd "M-t") 'vterm)
-  (define-key evil-insert-state-map (kbd "C-i") 'completion-at-point)
+  (define-key evil-insert-state-map (kbd "<tab>") 'self-insert-command)
+  (define-key evil-insert-state-map (kbd "C-SPC") 'company-complete)
   (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
@@ -197,13 +193,16 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  (evil-mode))
+
 
 (use-package evil-collection
   :after evil
   :config
   (setq evil-want-keybinding nil)
   (evil-collection-init))
+
 
 (defun borwe/get_cpp_setup_cmd ()
   (cond ((equal system-type 'windows-nt) "vcvars64 && cmake -GNinja -Bbuild -DCMAKE_BUILD_TYPE=Debug")
@@ -289,20 +288,12 @@
 	(use-package vterm
 	:ensure t)))
 
-;; For pyright
-;;(use-package lsp-pyright;;
-;;  :ensure t
-;;  :hook (python-mode . (lambda ()
-;;			 (require 'lsp-pyright)
-;;			 (lsp-deferred))))
-
 ;;zig mode
 (use-package zig-mode)
 
 ;;go mode
 (use-package go-mode
   :hook (go-mode . eglot-ensure))
-
 
 ;; Nuru-LSP
 (define-derived-mode nuru-mode prog-mode "Nuru Mode")
@@ -358,16 +349,11 @@
 ;;  :init (lsp-treemacs-sync-mode 1))
 
 (use-package company
-  :bind (:map company-active-map
-	      ("<tab>" . company-complete-selection))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
-
-;;(use-package lsp-ui
-;;  :hook (lsp-mode . lsp-ui-mode))
-
-(use-package lsp-ivy)
+  (company-idle-delay 0.0)
+  :config
+  (global-company-mode t))
 
 ;;typescript editing
 (use-package typescript-mode
