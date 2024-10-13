@@ -3,8 +3,8 @@
 (tool-bar-mode -1)   ; disable the toolbar
 (tooltip-mode -1)    ; disable tooltips
 (set-fringe-mode 10) ; give some breathing room
+(setq-default indent-tabs-mode t) ; Enable tab for tabs
 (setq-default tab-width 4) ; Set tab width
-
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
 
@@ -119,14 +119,16 @@
 	     :config
 	     (ivy-mode 1))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :ensure t
+  :custom (all-the-icons-install-fonts))
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 1)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-one-light t))
+  :init (load-theme 'doom-one t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -182,11 +184,23 @@
   (define-key evil-normal-state-map (kbd "<SPC> R") 'eglot-reconnect)
   (define-key evil-normal-state-map (kbd "<SPC> x") 'flymake-show-project-diagnostics)
   (define-key evil-normal-state-map (kbd "M-t") 'vterm)
-  (define-key evil-insert-state-map (kbd "<tab>") 'self-insert-command)
+  (define-key evil-insert-state-map (kbd "<tab>") (lambda ()
+													(interactive)
+													(insert "\t")))
   (define-key evil-insert-state-map (kbd "C-SPC") 'company-complete)
   (define-key evil-insert-state-map (kbd "C-x f") 'comint-replace-by-expanded-filename)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-insert-state-map (kbd "C-h") (lambda ()
+												  (interactive)
+												  (let ((choice
+														 (completing-read "Choose help type: " '("function" "keys"))))
+													(cond
+													 ((string= choice "function")
+													  (call-interactively 'describe-function))
+													 ((string= choice "keys")
+													  (call-interactively 'describe-key)))
+													)
+												  ))
 
   ;; use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
