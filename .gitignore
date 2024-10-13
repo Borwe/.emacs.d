@@ -16,3 +16,6 @@ url/
 .emacs.desktop
 games/
 projectile.cache
+codeium/
+custom.el
+lisp/

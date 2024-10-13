@@ -8,6 +8,11 @@
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
 
+;; Set location to save custom settings
+(setq-default custom-file (concat (file-name-directory user-init-file) "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (require 'saveplace)
 (setq-default save-place t) ; Enable saving last location
 (save-place-mode)
@@ -82,6 +87,11 @@
 (use-package wakatime-mode
   :load-path "lisp/wakatime-mode"
   :config (global-wakatime-mode))
+
+(use-package codeium
+  :after company
+  :load-path "lisp/codeium.el"
+  :init (add-to-list 'completion-at-point-functions #'codeium-completion-at-point))
 
 ;(use-package emacs-winterm
 ;  :load-path "lisp/emacs-winterm")
@@ -378,16 +388,3 @@
   (add-to-list 'eglot-server-programs
 			   '(typescript-mode . ("C:/Users/Brian/.emacs.d/LSPs/typescript-server/node_modules/.bin/typescript-language-server" "--stdio"))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(codeium eldoc-box eglot-box zig-mode yaml-mode which-key wakatime-mode visual-fill-column typescript-mode tree-sitter-langs rustic rainbow-delimiters origami magit lsp-ivy ivy-rich helpful go-mode general evil-collection eglot doom-themes doom-modeline dart-mode counsel-projectile company cmake-font-lock all-the-icons)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
