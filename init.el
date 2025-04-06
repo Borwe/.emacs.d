@@ -13,6 +13,8 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
+(setq is-windows (eq system-type "windows-nt"))
+
 (require 'saveplace)
 (setq-default save-place t) ; Enable saving last location
 (save-place-mode)
@@ -52,12 +54,19 @@
 ;; use pairing of keys, eg: "" () '' etc...
 (electric-pair-mode 1)
 
-
+;; disable line numbers in terminals
 (dolist (mode '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+;; disable line wraping in markdown-mode
+(add-hook 'markdown-mode-hook
+		  (lambda ()
+			(setq truncate-lines t)
+			(visual-line-mode nil)))
+
+
 ;; set font
-(set-face-attribute 'default nil :font "Cascadia Mono" :height 130)
+(set-face-attribute 'default nil :font "Fira Code" :height 130)
 
 
 ;; initialize package sources
@@ -74,7 +83,9 @@
 ;;do git submodule init for everything in here
 (defun borwe/submodules_init ()
   (message "Starting to git submodule init")
-  (shell-command-to-string (concat "cd " (string-replace "\\" "/" (getenv "APPDATA")) "/.emacs.d && "
+  (shell-command-to-string (concat "cd " (string-replace "\\" "/" (if is-windows
+																	  (getenv "APPDATA")
+																	(getenv "HOME"))) "/.emacs.d && "
 						 "git submodule update --init --recursive"))
   (message "Done git submodule init"))
 (borwe/submodules_init)
