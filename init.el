@@ -13,6 +13,7 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
+(defvar is-wrap-enabled t)
 (setq is-windows (eq system-type "windows-nt"))
 
 (require 'saveplace)
@@ -55,18 +56,14 @@
 (electric-pair-mode 1)
 
 ;; disable line numbers in terminals
-(dolist (mode '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
+(dolist (mode '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook vterm-mode))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-;; disable line wraping in markdown-mode
-(add-hook 'markdown-mode-hook
-		  (lambda ()
-			(setq truncate-lines t)
-			(visual-line-mode nil)))
-
+;; add nvim mason bin path to path for lsp
+(add-to-list 'exec-path "/home/brian/.local/share/nvim/mason/bin/")
 
 ;; set font
-(set-face-attribute 'default nil :font "Fira Code" :height 130)
+(set-face-attribute 'default nil :font "Fira Code" :height 140)
 
 
 ;; initialize package sources
@@ -188,15 +185,50 @@
   :config (global-tree-sitter-mode)
   :after tree-sitter)
 
+(defun borwe/markdown-evil-insert-hook ()
+  "Hook function to disable markup hiding on enter insert with evil-mode and markdown mode"
+  (if (derived-mode-p 'markdown-mode)
+	  (markdown-toggle-markup-hiding -1)
+	  )
+  )
+
+;;write a hook function that runs when evil-mode enables
+(defun borwe/markdown-evil-exit-hook ()
+  "Hook function to disable markup hiding on exit insert with evil-mode and markdown mode"
+  (if (derived-mode-p 'markdown-mode)
+	  (markdown-toggle-markup-hiding 1)
+	  )
+  )
+
+(defun borwe/handle-padding ()
+  "Toggle padding on/off on current buffer"
+  (interactive)
+  (visual-line-mode 'toggle)
+  (setq-local truncate-lines
+			  (not visual-line-mode))
+  (message
+   (format "Visual lines %s truncated %s"
+		   visual-line-mode truncate-lines)))
+
 (use-package evil
   :after company
   :ensure t
+  ;;:hook
+	;;(evil-insert-state-entry . borwe/markdown-evil-insert-hook)
+	;;(evil-insert-state-exit . borwe/markdown-evil-exit-hook)
+	;;(evil-normal-state-entry-hook . borwe/markdown-evil-exit-hook)
+
+    
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
+  (add-hook 'evil-insert-state-entry-hook 'borwe/markdown-evil-insert-hook)
+  (add-hook 'evil-insert-state-exit-hook 'borwe/markdown-evil-exit-hook)
+  (add-hook 'evil-normal-state-entry-hook 'borwe/markdown-evil-exit-hook)
+  (define-key evil-normal-state-map (kbd "<SPC> p") 'borwe/handle-padding)
   (define-key evil-normal-state-map (kbd "<SPC> z") 'eldoc)
   (define-key evil-normal-state-map (kbd "<SPC> k") 'eldoc)
   (define-key evil-normal-state-map (kbd "<SPC> a") 'eglot-code-actions)
@@ -204,7 +236,9 @@
   (define-key evil-normal-state-map (kbd "<SPC> r") 'eglot-rename)
   (define-key evil-normal-state-map (kbd "<SPC> R") 'eglot-reconnect)
   (define-key evil-normal-state-map (kbd "<SPC> x") 'flymake-show-project-diagnostics)
-  (define-key evil-normal-state-map (kbd "M-t") 'vterm)
+  (define-key evil-normal-state-map (kbd "M-t") (lambda ()
+												  (interactive)
+													(vterm (format "vterm-%d" (+ (length (buffer-list)))))))
   (define-key evil-insert-state-map (kbd "<tab>") (lambda ()
 													(interactive)
 													(insert "\t")))
@@ -321,10 +355,13 @@
 (if (eq system-type 'gnu/linux)
     (let ()
 	(use-package vterm
-	:ensure t)))
+	  	:after evil
+		:ensure t)))
 
 ;;zig mode
-(use-package zig-mode)
+(use-package zig-mode
+  :hook (zig-mode . eglot-ensure)
+	(zig-mode . (lambda () (setq-local before-save-hook nil))))
 
 ;;go mode
 (use-package go-mode
