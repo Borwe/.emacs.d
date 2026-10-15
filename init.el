@@ -3,10 +3,14 @@
 (tool-bar-mode -1)   ; disable the toolbar
 (tooltip-mode -1)    ; disable tooltips
 (set-fringe-mode 10) ; give some breathing room
-(setq-default indent-tabs-mode t) ; Enable tab for tabs
-(setq-default tab-width 4) ; Set tab width
+(setq-default indent-tabs-mode nil) ; Enable spaces for tabs
+(setq-default tab-width 8) ; Set tab width
 (menu-bar-mode -1) ; disable the menu bar
 (setq visible-bell t) ; setup the visible bell
+
+;;setup window tabs
+(tab-bar-mode 1)	; enable tabs
+(tab-rename "Home") ; Rename to home tab
 
 ;; Set location to save custom settings
 (setq-default custom-file (concat (file-name-directory user-init-file) "custom.el"))
@@ -14,7 +18,7 @@
   (load custom-file))
 
 (defvar is-wrap-enabled t)
-(setq is-windows (eq system-type "windows-nt"))
+(setq-default is-windows (string= system-type "windows-nt"))
 
 (require 'saveplace)
 (setq-default save-place t) ; Enable saving last location
@@ -23,8 +27,7 @@
 (defun launch-new-emacs (&optional val)
   "Launch new instance of emacs mostly for debuging"
   (interactive)
-  (let ((cmd (if val
-				(concat "cd " invocation-directory " && "  invocation-name  " --execute " val )
+  (let ((cmd (if val (concat "cd " invocation-directory " && "  invocation-name  " --execute " val )
 					  (concat invocation-directory invocation-name)
 			   )))
 	(shell-command cmd)))
@@ -60,10 +63,13 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; add nvim mason bin path to path for lsp
-(add-to-list 'exec-path "/home/brian/.local/share/nvim/mason/bin/")
+(if is-windows
+    (add-to-list 'exec-path "c:/Users/Brian/AppData/Local/nvim-data/mason/bin")
+  (add-to-list 'exec-path "/home/brian/.local/share/nvim/mason/bin/"))
+
 
 ;; set font
-(set-face-attribute 'default nil :font "Fira Code" :height 140)
+(set-face-attribute 'default nil :font "Terminess Nerd Font" :height 150)
 
 
 ;; initialize package sources
@@ -95,11 +101,6 @@
 (use-package wakatime-mode
   :load-path "lisp/wakatime-mode"
   :config (global-wakatime-mode))
-
-(use-package codeium
-  :after company
-  :load-path "lisp/codeium.el"
-  :init (add-to-list 'completion-at-point-functions #'codeium-completion-at-point))
 
 ;(use-package emacs-winterm
 ;  :load-path "lisp/emacs-winterm")
@@ -141,12 +142,12 @@
   :ensure t
   :custom (all-the-icons-install-fonts))
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 1)))
+;;(use-package doom-modeline
+;;  :init (doom-modeline-mode 1)
+;;  :custom ((doom-modeline-height 1)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-one t))
+  :init (load-theme 'doom-acario-light t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -210,6 +211,11 @@
    (format "Visual lines %s truncated %s"
 		   visual-line-mode truncate-lines)))
 
+(defun borwe/disable-evil-in-modes ()
+  
+  (dolist (devil-modes '(eshell-mode-hook shell-mode-hook))
+    (add-hook devil-modes (lambda () (message "De-eviling") (turn-off-evil-mode)))))
+
 (use-package evil
   :after company
   :ensure t
@@ -225,6 +231,7 @@
   (setq evil-want-c-u-scroll t)
   (setq evil-want-c-i-jump nil)
   :config
+  (borwe/disable-evil-in-modes)
   (add-hook 'evil-insert-state-entry-hook 'borwe/markdown-evil-insert-hook)
   (add-hook 'evil-insert-state-exit-hook 'borwe/markdown-evil-exit-hook)
   (add-hook 'evil-normal-state-entry-hook 'borwe/markdown-evil-exit-hook)
@@ -264,7 +271,6 @@
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
   (evil-mode))
-
 
 (use-package evil-collection
   :after evil
@@ -357,6 +363,10 @@
 	(use-package vterm
 	  	:after evil
 		:ensure t)))
+
+;; meson mode
+(use-package meson-mode
+  :ensure t)
 
 ;;zig mode
 (use-package zig-mode
